@@ -1,0 +1,55 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.25'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.25'
+    id 'org.springframework.boot' version '3.5.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // --- Spring Boot starters ---
+    implementation 'org.springframework.boot:spring-boot-starter'         // core
+    implementation 'org.springframework.boot:spring-boot-starter-web'     // web (MVC/JSON/Jackson)
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // @NotBlank, @Min, ...
+
+    // --- Kotlin/Jackson integration ---
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'   // Kotlin <-> JSON 역/직렬화 필수
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    // --- Test ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+kotlin {
+    // Kotlin 1.9.x에서도 사용 가능한 구성 (경고 없이 JSR-305 추가)
+    compilerOptions {
+        freeCompilerArgs.addAll '-Xjsr305=strict'
+    }
+}
+
+// --- 핵심: 여러 main() 중에서 Spring Boot가 사용할 진입점을 명시 ---
+// Kotlin 파일의 top-level main은 JVM에서 ...Kt 이름으로 생성됩니다.
+bootRun {
+    mainClass.set('com.example.collectionspractice.CollectionsPracticeApplicationKt')
+}
+bootJar {
+    mainClass.set('com.example.collectionspractice.CollectionsPracticeApplicationKt')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
