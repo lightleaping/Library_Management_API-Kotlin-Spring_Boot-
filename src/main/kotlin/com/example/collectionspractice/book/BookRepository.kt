@@ -1,12 +1,11 @@
 package com.example.collectionspractice.book
 
 import org.springframework.stereotype.Repository
-import java.awt.print.Book
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 @Repository
-class BookRepositiory {
+class BookRepository {
     private val seq = AtomicLong(1)
     private val store = ConcurrentHashMap<Long, BookResponse>()
 

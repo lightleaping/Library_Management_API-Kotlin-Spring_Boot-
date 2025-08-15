@@ -1,4 +1,4 @@
-package kotlin_theory_review.exercise
+package exercise
 
 fun inStockUnderPrice(
     books: List<Map<String, Any?>>,

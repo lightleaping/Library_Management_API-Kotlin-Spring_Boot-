@@ -1,4 +1,4 @@
-package kotlin_theory_review.exercise
+package exercise
 
 data class Order(val userId: String, val amount: Double, val status: String)
 

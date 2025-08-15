@@ -1,4 +1,4 @@
-package kotlin_theory_review.exercise
+package exercise
 
 fun filterPrefix(words: List<String>, prefix: String = "de"): String {
     return words.filter { it.lowercase().startsWith(prefix.lowercase()) }

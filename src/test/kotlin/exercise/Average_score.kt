@@ -1,4 +1,4 @@
-package kotlin_theory_review.exercise
+package exercise
 
 fun averageScore(scores: List<Int>): String {
     val avg = scores.average() // built-in average function

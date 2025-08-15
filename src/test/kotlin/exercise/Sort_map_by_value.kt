@@ -1,4 +1,4 @@
-package kotlin_theory_review.exercise
+package exercise
 
 fun sortMapByValue(m: Map<String, Int>): String {
     return m.toList()
