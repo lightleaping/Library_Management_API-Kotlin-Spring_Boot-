@@ -24,4 +24,21 @@ class BookService(private val repo: BookRepository) {
     fun delete(id: Long) {
         if (!repo.delete(id)) throw NotFoundException("Book $id not found")
     }
+
+    fun list(query: String?, page: Int, size: Int): List<BookResponse> {
+        require(page >= 0) { "page must be >= 0" }
+        require(size > 0) { "size must be > 0" }
+
+        var items = repo.findAll()
+
+        if (!query.isNullOrBlank()){
+            val q = query.trim().lowercase()
+            items = items.filter { it.title.lowercase().contains(q) || it.author.lowercase().contains(q) }
+        }
+
+        val from = page * size
+        if (from >= items.size) return emptyList()
+        val to = minOf(from + size, items.size)
+        return items.subList(from, to)
+    }
 }
