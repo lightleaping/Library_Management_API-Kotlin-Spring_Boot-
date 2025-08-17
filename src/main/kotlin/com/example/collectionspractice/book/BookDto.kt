@@ -15,3 +15,16 @@ data class BookResponse(
     val author: String,
     val price: Int
 )
+
+fun BookEntity.toDto() = BookResponse(
+    id = this.id!!,
+    title = this.title,
+    author = this.author,
+    price = this.price
+)
+
+fun BookRequest.toEntity() = BookEntity(
+    title = this.title,
+    author = this.author,
+    price = this.price
+)

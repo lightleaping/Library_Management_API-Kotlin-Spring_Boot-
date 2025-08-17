@@ -1,44 +1,46 @@
 package com.example.collectionspractice.book
 
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
 class BookService(private val repo: BookRepository) {
 
-    /** Return all books, already sorted by id in the repository. */
-    fun getAll(): List<BookResponse> = repo.findAll()
+    fun getAll(): List<BookResponse> =
+        repo.findAll().map { it.toDto() }
 
-    /** Return one book or throw when missing. */
     fun getOne(id: Long): BookResponse =
-        repo.findById(id) ?: throw NotFoundException("Book $id not found")
+        repo.findById(id).orElseThrow { NotFoundException("Book $id not found") }.toDto()
 
-    /** Create a new book and return the created record with its generated id. */
     fun create(req: BookRequest): BookResponse =
-        repo.save(req)
+        repo.save(req.toEntity()).toDto()
 
-    /** Full replace (PUT semantics). Throw when the id does not exist. */
-    fun replace(id: Long, req: BookRequest): BookResponse =
-        repo.update(id, req) ?: throw NotFoundException("Book $id not found")
+    fun replace(id: Long, req: BookRequest): BookResponse {
+        val e = repo.findById(id).orElseThrow { NotFoundException("Book $id not found") }
+        e.title = req.title
+        e.author = req.author
+        e.price = req.price
+        return repo.save(e).toDto()
+    }
 
-    /** Delete by id. Throw when the id does not exist. */
     fun delete(id: Long) {
-        if (!repo.delete(id)) throw NotFoundException("Book $id not found")
+        if (!repo.existsById(id)) throw NotFoundException("Book $id not found")
+        repo.deleteById(id)
     }
 
     fun list(query: String?, page: Int, size: Int): List<BookResponse> {
         require(page >= 0) { "page must be >= 0" }
         require(size > 0) { "size must be > 0" }
 
-        var items = repo.findAll()
-
-        if (!query.isNullOrBlank()){
-            val q = query.trim().lowercase()
-            items = items.filter { it.title.lowercase().contains(q) || it.author.lowercase().contains(q) }
+        if (query.isNullOrBlank()) {
+            return repo.findAll(PageRequest.of(page, size)).content.map { it.toDto() }
         }
-
+        val matched = (repo.findByTitleContainingIgnoreCase(query) +
+                repo.findByAuthorContainingIgnoreCase(query)).distinct()
+        if (matched.isEmpty()) return emptyList()
         val from = page * size
-        if (from >= items.size) return emptyList()
-        val to = minOf(from + size, items.size)
-        return items.subList(from, to)
+        if (from >= matched.size) return emptyList()
+        val to = minOf(from + size, matched.size)
+        return matched.subList(from, to).map { it.toDto() }
     }
 }

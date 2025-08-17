@@ -2,6 +2,7 @@ package com.example.collectionspractice.book
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -24,4 +25,15 @@ class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
             .body(mapOf("error" to "validation_failed", "details" to details))
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleJsonParse(e: HttpMessageNotReadableException): ResponseEntity<Map<String, Any>> {
+        return ResponseEntity.badRequest().body(
+            mapOf(
+                "error" to "invalid_json",
+                "message" to (e.mostSpecificCause?.message ?: e.message ?: "Invalid request body")
+            )
+        )
+    }
+
 }
