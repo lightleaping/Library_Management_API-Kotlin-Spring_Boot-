@@ -1,0 +1,11 @@
+.gradle/
+build/
+out/
+*.iml
+*.log
+
+node_modules/
+frondend/node_modules/
+frondend/dist/
+
+.DS_Store

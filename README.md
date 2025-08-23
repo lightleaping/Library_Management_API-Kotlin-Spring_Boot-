@@ -1,111 +1,57 @@
-# 📚 CollectionsPractice – Library Management API  
+# 📚 Library Management API (Kotlin + Spring Boot)
 
-## 🚀 Overview
-This project is a **Library Management REST API** built with **Kotlin** and **Spring Boot**.  
-It demonstrates clean software design using a **three-layer architecture** (Controller → Service → Repository),  
-with input validation, global error handling, and additional features like search and pagination.  
+## 📌 프로젝트 개요
+이 프로젝트는 **도서 관리 REST API**입니다.  
+Kotlin과 Spring Boot를 기반으로 설계되었으며, **Controller → Service → Repository → Entity** 구조를 따릅니다.  
 
-The project is designed as a **beginner-friendly portfolio piece** for demonstrating REST API skills.
+## ✨ 주요 기능
+- 도서 등록 (Create)
+- 도서 조회 (Read, 전체/단일)
+- 도서 수정 (Update)
+- 도서 삭제 (Delete)
+- Swagger UI를 통한 API 문서 및 실행
 
----
+## ⚙️ 기술 스택
+- **Kotlin**
+- **Spring Boot 3.x**
+- **Spring Data JPA**
+- **H2 Database (in-memory)**
+- **Swagger / OpenAPI**
 
-## 🏗️ Features
-- **CRUD API** for books (`POST`, `GET`, `PUT`, `DELETE`)  
-- **Validation** using `@NotBlank` and `@Min`  
-- **Global exception handling** with consistent JSON errors  
-- **Search & Pagination** for scalable data retrieval  
-- **Layered architecture** (Controller, Service, Repository)  
-- **In-memory data store** (`ConcurrentHashMap`), easy to swap with DB later  
-
----
-
-## 📂 Project Structure
-```
-src/main/kotlin/com/example/collectionspractice/book
- ├── BookController.kt          # REST endpoints
- ├── BookDto.kt                 # Request/Response DTOs
- ├── BookService.kt             # Business logic
- ├── BookRepository.kt          # In-memory repository
- ├── GlobalExceptionHandler.kt  # JSON error responses
- └── NotFoundException.kt       # Custom exception
-```
-
----
-
-## ⚙️ Requirements
-- JDK 17+
-- Gradle 8+
-- Kotlin 1.9+
-- Spring Boot 3.5+
-
-Dependencies:
-```kotlin
-implementation("org.springframework.boot:spring-boot-starter-web")
-implementation("org.springframework.boot:spring-boot-starter-validation")
-```
-
----
-
-## ▶️ How to Run
+## 🚀 실행 방법
+### 1. H2 프로파일 실행
 ```bash
-./gradlew bootRun
+./gradlew bootRun --args='--spring.profiles.active=h2'
 ```
-Server runs at: `http://localhost:8080`
+
+### 2. Swagger UI 접속
+[http://localhost:8080/](http://localhost:8080/)  
+
+### 3. H2 Console 접속
+[http://localhost:8080/h2-console](http://localhost:8080/h2-console)  
+- JDBC URL: `jdbc:h2:mem:library`  
+- User: `sa`  
+- Password: (비움)
+
+## 📖 API 문서 (Swagger)
+### 📌 Books API
+- **POST /api/books** : 도서 등록  
+- **GET /api/books** : 전체 도서 조회  
+- **GET /api/books/{id}** : 단일 도서 조회  
+- **PUT /api/books/{id}** : 도서 수정  
+- **DELETE /api/books/{id}** : 도서 삭제  
+
+## 📸 실행 화면
+> 여기에는 Swagger UI 캡처 화면과 H2 Console 캡처 화면을 첨부하세요.
+
+예시:
+1. Swagger에서 `POST /api/books` 실행 성공 화면
+2. Swagger에서 `GET /api/books` 조회 결과 화면
+3. H2 Console에서 `SELECT * FROM BOOKS;` 실행 결과 화면
 
 ---
 
-## 🧪 API Test (curl Examples)
-
-### 1. Create a Book
-```bash
-curl -X POST http://localhost:8080/api/books  -H "Content-Type: application/json"  -d '{"title":"Clean Code","author":"Robert Martin","price":42000}'
-```
-
-### 2. Get All Books
-```bash
-curl http://localhost:8080/api/books
-```
-
-### 3. Get One Book
-```bash
-curl http://localhost:8080/api/books/1
-```
-
-### 4. Update a Book
-```bash
-curl -X PUT http://localhost:8080/api/books/1  -H "Content-Type: application/json"  -d '{"title":"Clean Code (2nd)","author":"Robert Martin","price":45000}'
-```
-
-### 5. Delete a Book
-```bash
-curl -X DELETE http://localhost:8080/api/books/1 -i
-```
-
----
-
-## 📊 Example Error Responses
-- **400 Bad Request (Validation failed)**
-```json
-{
-  "error": "validation_failed",
-  "details": {
-    "title": "must not be blank",
-    "price": "must be >= 0"
-  }
-}
-```
-
-- **404 Not Found**
-```json
-{
-  "error": "Book 99 not found"
-}
-```
-
----
-
-## 🌱 Next Steps (for portfolio enhancement)
-- Replace in-memory store with **Spring Data JPA + H2/MySQL**
-- Add **Swagger/OpenAPI** for auto-generated API docs
-- Write **unit tests** and **integration tests**
-- Provide **Dockerfile** for deployment
+## 📌 향후 발전 방향
+- MySQL DB 연동 (실제 운영 DB 경험)
+- 검색 API (제목/저자 키워드 검색)
+- 페이징 API (대량 데이터 처리)
